@@ -1,0 +1,44 @@
+## 젠킨스 내부 설정을 코드로 설정하는 JCasC 코드 
+jenkins:
+  systemMessage: "MiriZoom Jenkins - managed by JCasC"
+
+  numExecutors: 2
+  mode: NORMAL
+
+  securityRealm:
+    local:
+      allowsSignup: false
+      users:
+        - id: "${JENKINS_ADMIN_ID}"
+          password: "${JENKINS_ADMIN_PASSWORD}"
+
+  authorizationStrategy:
+    loggedInUsersCanDoAnything:
+      allowAnonymousRead: false
+
+credentials:
+  system:
+    domainCredentials:
+      - credentials:
+          - usernamePassword:
+              scope: GLOBAL
+              id: "github-credentials"
+              description: "GitHub repository access"
+              username: "${GITHUB_USERNAME}"
+              password: "${GITHUB_TOKEN}"
+
+          - usernamePassword:
+              scope: GLOBAL
+              id: "dockerhub-credentials"
+              description: "Docker Hub access"
+              username: "${DOCKERHUB_USERNAME}"
+              password: "${DOCKERHUB_TOKEN}"
+
+          - string:
+              scope: GLOBAL
+              id: "mirizoom-kakao-js-key"
+              description: "Kakao JavaScript key for the frontend build"
+              secret: "${MIRIZOOM_KAKAO_JS_KEY}"
+
+jobs:
+  - file: /var/jenkins_home/jobdsl/pipelines.groovy
